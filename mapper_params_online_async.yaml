@@ -12,54 +12,58 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: odom
     map_frame: map
-    base_frame: base_link  # F1TENTH용 수정
+    base_frame: base_link
     scan_topic: /scan
     use_map_saver: true
-    mode: mapping #localization
-
-    # if you'd like to immediately start continuing a map at a given pose
-    # or at the dock, but they are mutually exclusive, if pose is given
-    # will use pose
-    #map_file_name: test_steve
-    # map_start_pose: [0.0, 0.0, 0.0]
-    #map_start_at_dock: true
+    mode: mapping
 
     debug_logging: false
-    throttle_scans: 1  # 모든 스캔 처리 (스킵 안함)
-    transform_publish_period: 0.02  # TF 발행 주기 (50Hz)
-    map_update_interval: 1.0  # 맵 업데이트 주기 (1초) - 빠르게 수정
-    resolution: 0.05  # 맵 해상도 5cm
+    throttle_scans: 1
+    transform_publish_period: 0.02
+    map_update_interval: 1.0
+    resolution: 0.05
     restamp_tf: false
-    min_laser_range: 0.0  # 최소 레이저 거리
-    max_laser_range: 10.0  # F1TENTH 환경에 맞게 수정 (20.0 → 10.0)
-    minimum_time_interval: 0.1  # 스캔 처리 최소 간격 - 빠르게 수정
-    transform_timeout: 0.5  # TF 대기 시간 증가
+    min_laser_range: 0.0
+    max_laser_range: 10.0
+    minimum_time_interval: 0.1
+    transform_timeout: 0.5
     tf_buffer_duration: 30.0
-    stack_size_to_use: 40000000  # 큰 맵 직렬화용 스택 크기
+    stack_size_to_use: 40000000
     enable_interactive_mode: true
 
     # General Parameters
     use_scan_matching: true
     use_scan_barycenter: true
-    minimum_travel_distance: 0.02  # 2cm만 움직여도 업데이트 - 더 민감하게
-    minimum_travel_heading: 0.02   # 약 1도 회전해도 업데이트 - 더 민감하게
+
+    # [튜닝] 너무 자주 업데이트되면 노이즈 생김 → 0.05~0.2 사이로 조정
+    minimum_travel_distance: 0.1   # 원래 0.02 → 10cm 움직일 때만 업데이트
+    minimum_travel_heading: 0.1    # 원래 0.02 → 약 6도 회전할 때만 업데이트
+
     scan_buffer_size: 10
     scan_buffer_maximum_scan_distance: 10.0
     link_match_minimum_response_fine: 0.1  
     link_scan_maximum_distance: 1.5
-    loop_search_maximum_distance: 3.0
-    do_loop_closing: true 
-    loop_match_minimum_chain_size: 10           
-    loop_match_maximum_variance_coarse: 3.0  
-    loop_match_minimum_response_coarse: 0.35    
-    loop_match_minimum_response_fine: 0.45
 
-    # Correlation Parameters - Correlation Parameters
-    correlation_search_space_dimension: 0.5
-    correlation_search_space_resolution: 0.01
+    # [튜닝] 루프 클로징 탐색 범위 확대
+    loop_search_maximum_distance: 5.0      # 원래 3.0 → 더 넓게 루프 탐색
+
+    do_loop_closing: true
+
+    # [튜닝] 루프 클로징 감지 민감도
+    loop_match_minimum_chain_size: 5       # 원래 10 → 더 빨리 루프 감지
+    loop_match_maximum_variance_coarse: 3.0  
+
+    # [튜닝] 루프 클로징 정확도 강화
+    loop_match_minimum_response_coarse: 0.45   # 원래 0.35
+    loop_match_minimum_response_fine: 0.55     # 원래 0.45
+
+    # Correlation Parameters
+    # [튜닝] 스캔 매칭 정밀도 향상
+    correlation_search_space_dimension: 0.3    # 원래 0.5
+    correlation_search_space_resolution: 0.005 # 원래 0.01 → 더 정밀하게
     correlation_search_space_smear_deviation: 0.1 
 
-    # Correlation Parameters - Loop Closure Parameters
+    # Loop Closure Parameters
     loop_search_space_dimension: 8.0
     loop_search_space_resolution: 0.05
     loop_search_space_smear_deviation: 0.03
@@ -67,7 +71,6 @@ slam_toolbox:
     # Scan Matcher Parameters
     distance_variance_penalty: 0.5      
     angle_variance_penalty: 1.0    
-
     fine_search_angle_offset: 0.00349     
     coarse_search_angle_offset: 0.349   
     coarse_angle_resolution: 0.0349        
